@@ -1,0 +1,39 @@
+version: '3'
+
+networks:
+  wordpress-network:
+    driver: bridge
+
+volumes:
+  wordpress_data:
+  mariadb_data:
+
+services:
+  database:
+    container_name: mariadb
+    image: hngtech11/mariadb:day1
+    environment:
+      - MARIADB_USER=hng_wordpress
+      - MARIADB_PASSWORD=hng11_2024
+      - MARIADB_DATABASE=hng11_wordpress
+    networks:
+      - wordpress-network
+    volumes:
+      - mariadb_data:/bitnami/mariadb
+
+  wordpress_blog:
+    container_name: wordpress
+    image: hngtech11/wordpress:day1
+    ports:
+      - 8443:8443
+      - 8080:8080
+    env_file:
+      - path: ./.env
+        required: true
+      - path: ./.env.local
+        required: false
+    volumes:
+      - wordpress_data:/bitnami/wordpress
+    networks:
+      - wordpress-network
+
